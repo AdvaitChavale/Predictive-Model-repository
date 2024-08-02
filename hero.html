@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Model Library</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@aeternity/aepp-sdk@latest/dist/aepp-sdk.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a; /* Dark background */
+            color: #ffffff; /* Light text */
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #ff6f61; /* Vivid color */
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links li {
+            display: inline;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #ffe600; /* Highlight color on hover */
+        }
+
+        /* Hero Section */
+        .hero {
+            background-image: url('hero-image.jpg'); /* Add your hero image link here */
+            background-size: cover;
+            background-position: center;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ffffff; /* White text */
+        }
+
+        .hero p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            color: #ffffff; /* White text */
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #28a745; /* Green color */
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #218838; /* Darker green */
+        }
+
+        /* Other sections styles */
+        /* About Me Section */
+        .about-me {
+            padding: 40px;
+            text-align: center;
+            background-color: #ffcc00; /* Yellow color */
+        }
+
+        .about-me h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .about-me p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        /* Trust Accuracy Section */
+        .trust-accuracy {
+            padding: 40px;
+            text-align: center;
+            background-color: #ff6f61; /* Vivid color */
+        }
+
+        .trust-accuracy h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+.accuracy-image {
+    width: 100%; /* Make the image take the full width of its container */
+    height: auto; /* Maintain aspect ratio */
+    max-width: 300px; /* Set a maximum width */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer; /* Change cursor to pointer to indicate clickability */
+    transition: transform 0.3s; /* Add transition for hover effect */
+}
+
+.accuracy-image:hover {
+    transform: scale(1.05); /* Slightly enlarge the image on hover */
+}
+
+/* Fullscreen overlay styles */
+.fullscreen-overlay {
+    display: none; /* Initially hidden */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Ensure it's above everything else */
+}
+
+.fullscreen-image {
+    max-width: 90%; /* Limit the size of the full-screen image */
+    max-height: 90%; /* Limit the height */
+    border-radius: 10px; /* Rounded corners */
+}
+
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #dc3545; /* Red color */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1002; /* Ensure it's above the image */
+}
+
+        /* Model Cards Section */
+        .model-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .model-title {
+            font-size: 36px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .model-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .model-card {
+            position: relative;
+            width: 250px;
+            perspective: 1000px; /* Enable 3D effect */
+        }
+
+        .card-body {
+            background-color: #282c34; /* Dark card background */
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s;
+            transform-style: preserve-3d;
+            position: relative;
+            height: 300px; /* Fixed height for card */
+        }
+
+        .card-body:hover {
+            transform: rotateY(10deg);
+        }
+
+        .model-description {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #ffffff; /* White text */
+        }
+
+        .open-popup {
+            background-color: #007bff; /* Blue color */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .open-popup:hover {
+            background-color: #0056b3; /* Darker blue */
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            display: flex;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 400px; /* Restore the original popup width */
+            text-align: center;
+            perspective: 1000px; /* Enable 3D effect */
+        }
+
+        .close-popup {
+            background-color: #dc3545; /* Red color */
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-popup:hover {
+            background-color: #c82333; /* Darker red */
+        }
+
+        .input-field {
+            margin: 10px 0;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .predict-button {
+            background-color: #28a745; /* Green color */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .predict-button:hover {
+            background-color: #218838; /* Darker green */
+        }
+
+        /* Contact Section */
+        .contact {
+            background-color: #007bff; /* Blue color */
+            color: #fff;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .contact p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .contact-form textarea {
+            height: 120px;
+        }
+
+        .contact-form button {
+            background-color: #fff;
+            color: #007bff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .contact-form button:hover {
+            background-color: #e6e6e6;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .scroll-to-top:hover {
+            background-color: #0056b3; /* Darker blue */
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-brand">Predictive Model Library</div>
+    <ul class="nav-links">
+        <li><a href="#about-me">About</a></li>
+        <li><a href="#models">Models</a></li>
+        <li><a href="#contact">Contact</a></li> <!-- Added Contact link back -->
+    </ul>
+</nav>
+
+<header>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Predictive Model Library</h1>
+            <p>Unlock the power of predictive modeling for your business</p>
+            <a href="#models" class="cta-button">Get Started</a>
+        </div>
+    </section>
+</header>
+
+<main>
+    <section class="about-me" id="about-me">
+        <h2>About the Developer</h2>
+        <p>Hi, I'm <b>Advait Chavale</b>, the creator of this Predictive Model Library. I have a passion for using AI and machine learning to solve real-world problems. My goal is to make predictive model library in order to complete My Edunet Internship project.</p>
+    </section>
+
+    <section class="ibm-watson-studio">
+        <h2>Built on IBM Watson Studio</h2>
+        <p>My predictive models are powered by IBM Watson Studio Auto Ai, ensuring accuracy and reliability.</p>
+    </section>
+
+    <section class="trust-accuracy">
+        <h2>Trust and Accuracy</h2>
+        <p>My models have been tested and validated to provide reliable predictions. <br>
+            The models have been tested and working on both IBM Watson Studio and Website but might not show output if the Lite version limits are exhausted.
+        </p>
+        <div class="accuracy-images">
+            <img src="accuracy sleep health.jpg" alt="Accuracy Image 1" class="accuracy-image" /> <!-- Add your image link here -->
+            <img src="accuracy employee attrition.jpg" alt="Accuracy Image 2" class="accuracy-image" /> <!-- Add your image link here -->
+        </div>
+    </section>
+
+    <section class="model-container" id="models">
+        <h2 class="model-title">Our Predictive Models</h2>
+        <p>If the models are not responding that means their Lite version CuH limits are exhuashted</p>
+        <div class="model-cards">
+            <div class="model-card">
+                <div class="card-body">
+                    <div class="model-title">Employee Attrition</div>
+                    <div class="model-description">Predict employee attrition based on various factors.</div>
+                    <button class="open-popup" onclick="openPopup('Employee Attrition')">Predict</button>
+                </div>
+            </div>
+            <div class="model-card">
+                <div class="card-body">
+                    <div class="model-title">Plant Health Predictor</div>
+                    <div class="model-description">Assess plant health based on environmental factors.</div>
+                    <button class="open-popup" onclick="openPopup('Plant Health Predictor')">Predict</button>
+                </div>
+            </div>
+            <div class="model-card">
+                <div class="card-body">
+                    <div class="model-title">Sleep Health Predictor</div>
+                    <div class="model-description">Evaluate sleep health based on various inputs.</div>
+                    <button class="open-popup" onclick="openPopup('Sleep Health Predictor')">Predict</button>
+                </div>
+            </div>
+            <div class="model-card">
+                <div class="card-body">
+                    <div class="model-title">Placement Chances</div>
+                    <div class="model-description">Determine placement chances based on CGPA.</div>
+                    <button class="open-popup" onclick="openPopup('Placement Chances')">Predict</button>
+                </div>
+            </div>
+            <div class="model-card">
+                <div class="card-body">
+                    <div class="model-title">Shopping Frequency Predictor</div>
+                    <div class="model-description">Predict shopping frequency based on customer data.</div>
+                    <button class="open-popup" onclick="openPopup('Shopping Frequency Predictor')">Predict</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <div class="card-body">
+                <h2 id="popup-title">Model Input</h2>
+                <div id="input-fields">
+                    <!-- Input fields will be dynamically generated based on the model -->
+                </div>
+                <button class="predict-button" onclick="predict()">Predict</button>
+                <button class="close-popup" onclick="closePopup()">Close</button>
+                <div id="prediction-result" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <section class="contact" id="contact">
+        <h2>Contact me</h2>
+        <p>Have a question or want to learn more? Get in touch with us!</p>
+        <form class="contact-form" onsubmit="handleContactForm(event)">
+            <input type="text" placeholder="Name" required />
+            <input type="email" placeholder="Email" required />
+            <textarea placeholder="Message" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <div class="social-media">
+            <h3>Connect with me:</h3><p> Better to DM me on below links</p>
+            <a href="https://www.linkedin.com/in/advait-chavale/" target="_blank">LinkedIn</a>
+            <a href="https://github.com/AdvaitChavale/" target="_blank">GitHub</a>
+        </div>
+    </section>
+    
+</main>
+
+<footer>
+    <p>&copy; 2024 Predictive Model Library. All rights reserved.</p>
+</footer>
+
+<button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">↑</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script src="script.js"></script> <!-- Link to external JS file -->
+</body>
+</html>
